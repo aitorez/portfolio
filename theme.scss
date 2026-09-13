@@ -1,0 +1,199 @@
+/*-- scss:defaults --*/
+
+@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+$ink:        #16232e;
+$paper:      #f5f7f8;
+$surface:    #ffffff;
+$muted:      #5c6b78;
+$rule:       #d5dde3;
+$accent:     #2f6f6b;
+
+$body-bg:    $paper;
+$body-color: $ink;
+$link-color: $accent;
+
+$font-family-sans-serif: "IBM Plex Sans", system-ui, sans-serif;
+$font-family-serif:      "Spectral", Georgia, serif;
+
+$font-size-root: 17px;
+$line-height-base: 1.68;
+
+$h1-font-size: 2.45rem;
+$h2-font-size: 1.5rem;
+$h3-font-size: 1.18rem;
+
+$navbar-bg: $paper;
+$navbar-fg: $ink;
+$toc-color: $muted;
+
+/*-- scss:rules --*/
+
+body {
+  font-family: $font-family-serif;
+  font-weight: 400;
+  letter-spacing: 0.002em;
+}
+
+h1, h2, h3, h4 {
+  font-family: $font-family-serif;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  line-height: 1.24;
+}
+
+h2 {
+  margin-top: 2.9rem;
+  margin-bottom: 0.9rem;
+}
+
+h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.6rem;
+  color: $muted;
+  font-weight: 600;
+}
+
+/* Navegación y metadatos: la otra familia */
+.navbar, .nav-link, .navbar-brand,
+#TOC, .sidebar, .quarto-listing,
+figcaption, .quarto-title-meta {
+  font-family: $font-family-sans-serif;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Marco de página (solo en pantallas anchas): fondo gris alrededor, columna blanca centrada.
+   Por debajo de 60rem se deja el layout de Quarto tal cual, sin forzar anchuras,
+   para no pelear con su grid responsive en móvil. */
+@media (min-width: 60rem) {
+  .navbar {
+    background: transparent;
+    border-bottom: none;
+  }
+
+  #quarto-header .navbar-container {
+    max-width: 54rem;
+    margin: 0 auto;
+    background: $surface;
+    border-bottom: 1px solid $rule;
+    padding: 0.9rem 2.5rem;
+    border-radius: 0 0 8px 8px;
+  }
+
+  #quarto-content {
+    max-width: 54rem;
+    margin: 1.6rem auto;
+    background: $surface;
+    border-radius: 8px;
+    padding-bottom: 1rem;
+  }
+}
+
+main {
+  max-width: 43rem;
+}
+
+p, li { max-width: 40rem; }
+
+/* Portada */
+.hero {
+  margin: 3.4rem 0 3rem;
+}
+
+.hero p.statement {
+  font-size: 1.72rem;
+  line-height: 1.36;
+  font-weight: 300;
+  letter-spacing: -0.014em;
+  max-width: 34rem;
+  margin-bottom: 1.6rem;
+}
+
+.hero p.statement em {
+  font-style: normal;
+  box-shadow: inset 0 -0.42em 0 rgba(47, 111, 107, 0.16);
+}
+
+.hero > p {
+  color: $muted;
+  max-width: 36rem;
+  text-align: justify;
+  hyphens: auto;
+  margin-bottom: 1rem;
+}
+
+.elsewhere {
+  font-family: $font-family-sans-serif;
+  font-size: 0.92rem;
+  margin-top: 2.2rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid $rule;
+}
+
+.elsewhere a { margin-right: 1.4rem; }
+
+/* Listado de artículos */
+.quarto-listing-default .listing-item {
+  border-bottom: 1px solid $rule;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.listing-title { font-size: 1.28rem; font-weight: 500; }
+.listing-description { color: $muted; }
+.listing-date { color: $muted; font-size: 0.88rem; }
+
+/* Artículo */
+.quarto-title h1.title {
+  margin-bottom: 0.5rem;
+}
+
+.quarto-title-meta {
+  color: $muted;
+  font-size: 0.9rem;
+  margin-bottom: 2.4rem;
+}
+
+#quarto-document-content > p:first-of-type::first-letter {
+  font-family: $font-family-serif;
+  font-size: 3.4em;
+  font-weight: 500;
+  line-height: 0.82;
+  color: $accent;
+  float: left;
+  padding-right: 0.09em;
+  padding-top: 0.06em;
+}
+
+blockquote {
+  border-left: 2px solid $accent;
+  padding-left: 1.1rem;
+  color: $muted;
+  font-style: italic;
+}
+
+figure { margin: 2.4rem 0; }
+figure img { background: $surface; border: 1px solid $rule; border-radius: 3px; }
+figcaption { color: $muted; font-size: 0.88rem; margin-top: 0.6rem; }
+
+a { text-underline-offset: 0.18em; }
+
+@media (max-width: 768px) {
+  html { font-size: 16px; }
+  .hero p.statement { font-size: 1.34rem; }
+
+  /* La rejilla de página de Quarto (page-columns) no reduce su ancho mínimo
+     en pantallas estrechas y provoca scroll horizontal. Se desactiva la
+     rejilla por debajo del punto de corte y se deja fluir en bloque. */
+  #quarto-content.page-columns {
+    display: block !important;
+  }
+
+  #quarto-content.page-columns > * {
+    grid-column: unset !important;
+  }
+}

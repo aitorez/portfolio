@@ -1,0 +1,19 @@
+---
+pagetitle: "Aitor Elordi Zamora"
+toc: false
+---
+
+::: {.hero}
+
+[Ingeniero de datos en consultoría, con cerca de cinco años de experiencia, actualmente en CGI. En paralelo, hago un doctorado en la Universidad de Málaga sobre sistemas de alerta temprana de avenidas en cuencas mediterráneas, en colaboración con el Laboratorio de Geomorfología y Suelos de Málaga.]{.bio}
+
+[Mi trabajo consiste en migrar y modernizar plataformas analíticas sobre Azure y AWS: llevar sistemas heredados —Salesforce, QlikView— a arquitecturas actuales sobre Databricks, cubriendo el ciclo completo, desde los requisitos hasta el despliegue.]{.bio}
+
+[Este sitio existe para publicar razonamiento propio sobre problemas reales — los de mi trabajo, los de la tesis, y otros que simplemente me interesan.]{.bio}
+
+::: {.elsewhere}
+[CV (ES)](cv.pdf)
+[CV (EN)](cv_en.pdf)
+:::
+
+:::

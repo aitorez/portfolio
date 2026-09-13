@@ -1,0 +1,141 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+
+%====================
+% OFFICIAL PUBLIC OVERLEAF TEMPLATE
+% https://www.overleaf.com/latex/templates/data-science-tech-resume-template/zcdmpfxrzjhv
+%====================
+
+\usepackage{TLCresume}
+\usepackage{ragged2e}
+
+%====================
+% DATOS DE CONTACTO
+%====================
+\def\name{Aitor Elordi Zamora}
+\def\phone{656897018}
+\def\city{Málaga}
+\def\email{aitor.elordizamora@outlook.com}
+\def\LinkedIn{aitor-elordi-zamora}
+\def\role{Ingeniero de Datos Senior}
+
+\input{_header}
+\begin{document}\pagestyle{others}\thispagestyle{first_page}
+
+% Macro de bloque: empresa / fechas / puesto / ubicación
+\newcommand{\experience}[4]{
+    \textbf{#1} \hfill #2 \\
+    \textit{#3} \hfill #4 \\
+}
+
+% Macro de cliente dentro de una misma empresa
+\newcommand{\cliente}[2]{
+    \vspace{0.15cm}
+    \textbf{#1} \hfill \textit{#2} \\
+    \vspace{-0.2cm}
+}
+
+\begingroup
+\justifying
+Ingeniero de datos con casi 5 años de experiencia en la migración y modernización de plataformas analíticas sobre \textbf{Azure} y \textbf{AWS}. En CGI he participado en \textbf{diez proyectos para cinco clientes} en menos de tres años, cubriendo el ciclo completo —requisitos, análisis funcional, estimación, diseño del modelo, desarrollo, pruebas y despliegue— en telecomunicaciones, banca, infraestructuras, farmacéutico y gran consumo. Actualmente desarrollo una herramienta en Python que automatiza la migración de Informatica PowerCenter a dbt Core sobre Redshift. Compagino el trabajo con una tesis doctoral en la Universidad de Málaga sobre sistemas de alerta temprana de avenidas.
+\par
+\endgroup
+
+\section{Competencias técnicas}
+
+\begin{tabular}{p{0.17\textwidth} p{0.83\textwidth}}
+\textbf{Lenguajes:} & Python (Pandas, Dask, Scikit-learn), SQL (T-SQL, SparkSQL), PySpark, Bash. \\
+\textbf{Nube:} & Azure (Databricks, Data Factory, Data Lake Storage), AWS (Redshift). \\
+\textbf{Transformación:} & dbt Core, Informatica PowerCenter, Pentaho, SnapLogic, Dataiku. \\
+\textbf{Orquestación:} & Airflow, Azure Data Factory. \\
+\textbf{Arquitectura:} & Medallion, Delta Lake, Unity Catalog, modelos multicliente con acceso segregado. \\
+\textbf{Reporting:} & Power BI, QlikView (como origen de migración). \\
+\textbf{DevOps:} & Azure DevOps, Git, GitHub, CI/CD, Linux. \\
+\textbf{Analítica:} & Series temporales (ARIMA, LSTM), optimización heurística, redes neuronales. \\
+\textbf{Metodología:} & Scrum, equipos distribuidos e internacionales. \\
+\end{tabular}
+
+\section{Experiencia profesional}
+
+\experience{CGI}{Diciembre 2023 -- Presente}{Data Engineer / Consultor de datos}{Málaga, España}
+\vspace{0.1cm}
+Consultoría con asignación a distintos clientes finales. Además de la ejecución, me ocupo del análisis previo y de la estimación de horas y recursos que sustentan la oferta con la que la compañía concurre a licitación.
+
+\cliente{Schneider Electric}{Proyecto actual --- equipo internacional de 20 personas, Scrum}
+\begin{itemize}
+    \item Desarrollo de una \textbf{aplicación en Python} que automatiza la migración de flujos de Informatica PowerCenter a modelos de \textbf{dbt Core}: interpreta los workflows originales y genera el código equivalente, resolviendo de forma automática el \textbf{80\% de unos 50 workflows} y dejando el resto para intervención manual puntual.
+    \item Diseño del procedimiento de validación de la herramienta: la equivalencia con el sistema original se comprueba \textbf{por conteo y por contenido}, contrastando registro a registro el resultado del modelo dbt generado frente al del workflow de origen. No basta con que coincida el número de filas.
+    \item Definición de los \textbf{criterios de granularidad de los modelos dbt} atendiendo a su impacto sobre el CI/CD: muchos modelos pequeños e independientes en lugar de pocos ficheros extensos, lo que reduce los conflictos de merge y facilita la integración continua de un desarrollo repartido entre varias personas.
+    \item Optimización de consultas SQL sobre \textbf{Redshift} y desarrollo de DAGs en \textbf{Airflow}, en entorno Linux.
+\end{itemize}
+
+\cliente{Ferrovial}{Cuatro proyectos}
+\begin{itemize}
+    \item Responsable de cada proyecto de extremo a extremo: toma de requisitos e interlocución continua con cliente y usuarios de negocio, diseño y solicitud de la infraestructura, diseño de la arquitectura del modelo, redacción del documento funcional y del técnico, desarrollo, plan de pruebas y despliegue con Azure DevOps.
+    \item \textbf{Proyecto 1 --- Financiero.} Migración del reporting de \textbf{QlikView a Azure} (Databricks, Data Factory) con arquitectura \textbf{Medallion}, sobre el cierre de facturación de un departamento.
+    \item \textbf{Proyecto 2 --- Contable.} Migración equivalente ya sobre \textbf{Unity Catalog}, reproduciendo en la nueva plataforma el procedimiento con el que el cliente auditaba sus asientos en SAP y preservando la trazabilidad necesaria para que el resultado fuese defendible ante auditoría.
+    \item \textbf{Proyecto 3 --- Multicliente.} Plataforma para varias concesiones simultáneas, cada una con acceso exclusivo a su propia información mediante una capa de ocultación resuelta desde Power BI.
+    \item \textbf{Proyecto 4 --- Confirming.} Análisis y estimación de una plataforma de datos para la operativa de confirming con las entidades financieras participantes: arquitectura sobre Databricks (Medallion y Unity Catalog), explotación en Power BI y desglose del trabajo en fases y tareas valoradas en horas.
+    \item Los tres primeros se explotaban en Power BI, así que el criterio de modelado fue dejar resuelta la lógica en la capa \textit{gold} y no trasladarla al informe, de forma que el modelado dentro de Power BI se limitase a la presentación. Entregados \textbf{10--15 dashboards por proyecto}, más el mantenimiento posterior.
+    \item Como responsable de la apertura de la cuenta, actúo hoy de \textbf{referente técnico de los nuevos proyectos} que entran en paralelo: participo en las fases preliminares y acompaño a los desarrolladores en el diseño de la infraestructura y de los detalles técnicos de la solución.
+\end{itemize}
+
+\cliente{AstraZeneca}{Dos proyectos}
+\begin{itemize}
+    \item \textbf{Proyecto 1.} Migración a Python de las herramientas construidas en \textbf{Dataiku} que calculaban las métricas de evaluación de la red de visitadores médicos y sus gerentes —canal, forma, mensaje y cliente, con indicadores de iDetailing, VAEs, objetivos y ventas—, convirtiendo flujos visuales en código versionado y orquestado con \textbf{Airflow}.
+    \item \textbf{Proyecto 2.} Desarrollo de flujos en \textbf{Airflow y SnapLogic} para consolidar en \textbf{Redshift} datos procedentes de distintas instancias, dejándolos disponibles para el equipo de desarrollo de Power BI.
+\end{itemize}
+
+\cliente{Heineken}{Dos proyectos}
+\begin{itemize}
+    \item \textbf{Proyecto 1.} Migración a Azure de los datos de \textbf{Salesforce} de varias unidades de negocio, con Data Factory y Databricks.
+    \item \textbf{Proyecto 2.} Mantenimiento y evolución de una plataforma consolidada de \textbf{más de 150 procesos} —pipelines de Data Factory y jobs de Databricks— en ejecución paralela y con dependencias entre ellos: gestión de despliegues, resolución de incidencias y trabajo continuado de DevOps y SQL sobre desarrollos de terceros.
+\end{itemize}
+
+\cliente{Sector bancario}{ }
+\begin{itemize}
+    \item Normalización e integración de datos en la unificación de \textbf{unas 30 entidades} del grupo en una plataforma común, homogeneizando formatos y criterios de origen dispares. Desarrollo con Pentaho y SQL sobre entorno Linux remoto.
+\end{itemize}
+
+\vspace{0.3cm}
+\experience{Avatel Telecom}{Junio 2022 -- Diciembre 2023}{Data Engineer / Data Scientist}{España}
+\begin{itemize}
+    \item Rediseño de los procesos de \textbf{conciliación de facturación de carrier internacional e interconexión} con Python y SQL, eliminando tareas manuales y garantizando la integridad de los saldos financieros.
+    \item Desarrollo de un \textbf{motor de alertas sobre el facturador} para la detección temprana de anomalías en el ciclo de cobro y desviaciones de ingresos. Junto al conciliador, permitió recuperar \textbf{ingresos por importe de varios miles de euros mensuales} (\textit{revenue assurance}).
+    \item Implementación de procesamiento paralelo con \verb|ThreadPoolExecutor| para el tratamiento de volúmenes elevados de registros de facturación, reduciendo los tiempos de carga del entorno de análisis.
+    \item Despliegue de modelos de series temporales (\textbf{ARIMA, LSTM}) para la proyección de ingresos y costes operativos.
+\end{itemize}
+
+\section{Investigación}
+
+\experience{Universidad de Málaga}{Abril 2024 -- Presente}{Investigador -- Modelización hidrológica y sistemas de alerta temprana}{Málaga, España}
+\begin{itemize}
+    \item Desarrollo de un \textbf{modelo híbrido físico-heurístico} de alerta temprana de avenidas en cuencas mediterráneas de respuesta rápida, validado con datos horarios de la red de aforos \textbf{SAIH-Hidrosur}.
+    \item Diseño de una \textbf{función de pérdida asimétrica} que penaliza de forma distinta la infraestimación y la sobreestimación, alineando el criterio de optimización con el coste real de un fallo de alerta.
+    \item Construcción de un \textbf{framework de orquestación modular} de ejecución parametrizada que automatiza el ciclo completo, desde la ingesta de datos climáticos hasta el despliegue de los modelos de optimización.
+    \item Primer artículo en proceso de envío a revista internacional de hidrología; segundo trabajo en curso sobre predicción probabilística mediante conjuntos de modelos; comunicación presentada en congreso.
+\end{itemize}
+
+\experience{Smart Decision Lab (UMA)}{Octubre 2021 -- Junio 2022}{Asistente de Investigación}{Málaga, España}
+\begin{itemize}
+    \item Diseño de la infraestructura de datos para el procesamiento de datos experimentales en \textbf{teoría de juegos} y desarrollo de pipelines de limpieza y normalización de variables complejas.
+\end{itemize}
+
+\section{Formación}
+
+\experience{Doctorado en Matemática Aplicada y Economía}{2025 -- Actualidad}{Universidad de Málaga}{ }
+
+\experience{Máster en Management (MBA)}{2023 -- 2024}{Universidad Internacional de La Rioja (UNIR)}{ }
+
+\experience{Máster en Data Science \& Business Analytics}{2022 -- 2023}{Universidad de Nebrija}{ }
+
+\experience{Grado en Economía}{2018 -- 2022}{Universidad de Málaga}{ }
+
+\vspace*{0.3cm}
+\textbf{Certificaciones:}
+\begin{itemize}
+    \item \textbf{Microsoft Certified:} Azure Data Fundamentals (DP-900), 2024.
+    \item \textbf{IBM:} Professional Certificate in Fundamentals of Data Analytics.
+\end{itemize}
+
+\end{document}

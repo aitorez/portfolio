@@ -1,0 +1,38 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "posts/**"
+    - "!CONTEXTO.md"
+  resources:
+    - robots.txt
+
+website:
+  title: "Aitor Elordi Zamora"
+  description: "Ingeniería de datos, migraciones y modelización hidrológica."
+  site-url: "https://aitorez.github.io/portfolio"
+  navbar:
+    logo: ""
+    left:
+      - href: index.qmd
+        text: Inicio
+      - href: articulos.qmd
+        text: Artículos
+    right:
+      - text: LinkedIn
+        href: https://www.linkedin.com/in/aitor-elordi-zamora
+      - text: ORCID
+        href: https://orcid.org/0009-0006-1962-8078
+
+format:
+  html:
+    theme: [cosmo, theme.scss]
+    toc: true
+    toc-title: "En esta página"
+    toc-depth: 2
+    anchor-sections: true
+    link-external-newwindow: true
+    include-in-header:
+      text: |
+        <meta name="robots" content="noindex, nofollow">

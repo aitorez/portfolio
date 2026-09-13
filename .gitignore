@@ -1,0 +1,11 @@
+/.quarto/
+/_site/
+.DS_Store
+
+**/*.quarto_ipynb
+
+# Notas internas, no debe llegar al repo público
+/CONTEXTO.md
+
+# Configuración local de Claude Code, no es parte del sitio
+/.claude/

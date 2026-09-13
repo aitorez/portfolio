@@ -1,0 +1,12 @@
+---
+title: "Artículos"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  fields: [date, title, description]
+  date-format: "MMMM YYYY"
+  categories: false
+  feed: false
+toc: false
+---

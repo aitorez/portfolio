@@ -1,0 +1,141 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+
+%====================
+% OFFICIAL PUBLIC OVERLEAF TEMPLATE
+% https://www.overleaf.com/latex/templates/data-science-tech-resume-template/zcdmpfxrzjhv
+%====================
+
+\usepackage{TLCresume}
+\usepackage{ragged2e}
+
+%====================
+% CONTACT INFORMATION
+%====================
+\def\name{Aitor Elordi Zamora}
+\def\phone{656897018}
+\def\city{Málaga, Spain}
+\def\email{aitor.elordizamora@outlook.com}
+\def\LinkedIn{aitor-elordi-zamora}
+\def\role{Senior Data Engineer}
+
+\input{_header}
+\begin{document}\pagestyle{others}\thispagestyle{first_page}
+
+% Company / dates / role / location
+\newcommand{\experience}[4]{
+    \textbf{#1} \hfill #2 \\
+    \textit{#3} \hfill #4 \\
+}
+
+% Client block within the same employer
+\newcommand{\cliente}[2]{
+    \vspace{0.15cm}
+    \textbf{#1} \hfill \textit{#2} \\
+    \vspace{-0.2cm}
+}
+
+\begingroup
+\justifying
+Data engineer with almost 5 years of experience migrating and modernising analytics platforms on \textbf{Azure} and \textbf{AWS}. At CGI I have delivered \textbf{ten projects for five clients} in under three years, covering the full project lifecycle —requirements, functional analysis, estimation, data modelling, development, testing and deployment— across telecommunications, banking, infrastructure, pharmaceuticals and consumer goods. I am currently building a Python tool that automates the migration of Informatica PowerCenter to dbt Core on Redshift. Alongside this, I am completing a doctoral thesis at the University of Málaga on flood early warning systems.
+\par
+\endgroup
+
+\section{Technical Skills}
+
+\begin{tabular}{p{0.17\textwidth} p{0.83\textwidth}}
+\textbf{Languages:} & Python (Pandas, Dask, Scikit-learn), SQL (T-SQL, SparkSQL), PySpark, Bash. \\
+\textbf{Cloud:} & Azure (Databricks, Data Factory, Data Lake Storage), AWS (Redshift). \\
+\textbf{Transformation:} & dbt Core, Informatica PowerCenter, Pentaho, SnapLogic, Dataiku. \\
+\textbf{Orchestration:} & Airflow, Azure Data Factory. \\
+\textbf{Architecture:} & Medallion, Delta Lake, Unity Catalog, multi-tenant models with segregated access. \\
+\textbf{Reporting:} & Power BI, QlikView (as migration source). \\
+\textbf{DevOps:} & Azure DevOps, Git, GitHub, CI/CD, Linux. \\
+\textbf{Analytics:} & Time series (ARIMA, LSTM), heuristic optimisation, neural networks. \\
+\textbf{Ways of working:} & Scrum, distributed and international teams. \\
+\end{tabular}
+
+\section{Professional Experience}
+
+\experience{CGI}{December 2023 -- Present}{Data Engineer / Data Consultant}{Málaga, Spain}
+\vspace{0.1cm}
+Consulting work delivered on assignment to end clients. Beyond delivery, I am responsible for the upfront analysis and for the effort and resource estimates that underpin the bids the company submits to tender.
+
+\cliente{Schneider Electric}{Current project --- international team of 20, Scrum}
+\begin{itemize}
+    \item Built a \textbf{Python application} that automates the migration of Informatica PowerCenter flows into \textbf{dbt Core} models: it parses the original workflows and generates the equivalent code, resolving \textbf{80\% of some 50 workflows} automatically and leaving only targeted manual work.
+    \item Designed the tool's validation approach: equivalence with the source system is verified \textbf{by row count and by content}, comparing the output of each generated dbt model record by record against the original workflow. Matching row counts alone are not sufficient.
+    \item Set the \textbf{granularity criteria for the dbt models} based on their downstream CI/CD impact: many small, independent models rather than few large files, which cuts merge conflicts and eases continuous integration across a shared codebase.
+    \item SQL tuning on \textbf{Redshift} and development of \textbf{Airflow} DAGs, in a Linux environment.
+\end{itemize}
+
+\cliente{Ferrovial}{Four projects}
+\begin{itemize}
+    \item End-to-end ownership of each project: requirements gathering and continuous liaison with the client and business users, infrastructure design and provisioning requests, data model architecture, functional and technical specification documents, development, test plan and deployment through Azure DevOps.
+    \item \textbf{Project 1 --- Finance.} Migration of reporting from \textbf{QlikView to Azure} (Databricks, Data Factory) on a \textbf{Medallion} architecture, covering a department's billing close.
+    \item \textbf{Project 2 --- Accounting.} Equivalent migration, this time on \textbf{Unity Catalog}, reproducing on the new platform the procedure the client used to audit its SAP journal entries, preserving the traceability required for the results to stand up to audit.
+    \item \textbf{Project 3 --- Multi-tenant.} Single platform serving several concessions at once, each with access restricted to its own data through a row-level masking layer resolved in Power BI.
+    \item \textbf{Project 4 --- Supply chain finance.} Analysis and estimation of a data platform for the client's reverse factoring (\textit{confirming}) operations with the participating financial institutions: architecture on Databricks (Medallion and Unity Catalog), Power BI consumption layer, and a breakdown of the work into phases and tasks costed in hours.
+    \item As all three delivery projects were consumed in Power BI, the modelling principle was to resolve business logic in the \textit{gold} layer rather than in the report, keeping Power BI modelling limited to presentation. \textbf{10--15 dashboards delivered per project}, plus ongoing maintenance.
+    \item Having opened the account, I now act as \textbf{technical reference for new incoming projects}, contributing to the early phases and supporting developers on infrastructure design and the technical detail of the proposed solution.
+\end{itemize}
+
+\cliente{AstraZeneca}{Two projects}
+\begin{itemize}
+    \item \textbf{Project 1.} Migration to Python of tools built in \textbf{Dataiku} that computed the performance metrics for the medical sales representative network and their managers —channel, format, message and customer, with iDetailing, VAE, target and sales indicators— turning visual flows into version-controlled code orchestrated with \textbf{Airflow}.
+    \item \textbf{Project 2.} Development of \textbf{Airflow and SnapLogic} flows to consolidate data from separate instances into \textbf{Redshift}, making it available to the Power BI development team.
+\end{itemize}
+
+\cliente{Heineken}{Two projects}
+\begin{itemize}
+    \item \textbf{Project 1.} Migration of \textbf{Salesforce} data for several business units to Azure, using Data Factory and Databricks.
+    \item \textbf{Project 2.} Maintenance and evolution of an established platform of \textbf{over 150 processes} —Data Factory pipelines and Databricks jobs— running in parallel and with dependencies between them: release management, incident resolution and continuous DevOps and SQL work on third-party code.
+\end{itemize}
+
+\cliente{Banking sector}{ }
+\begin{itemize}
+    \item Data normalisation and integration for the consolidation of \textbf{around 30 entities} of a banking group onto a common platform, harmonising heterogeneous source formats and criteria. Built with Pentaho and SQL on a remote Linux environment.
+\end{itemize}
+
+\vspace{0.3cm}
+\experience{Avatel Telecom}{June 2022 -- December 2023}{Data Engineer / Data Scientist}{Spain}
+\begin{itemize}
+    \item Redesigned the \textbf{international carrier and interconnect billing reconciliation} processes in Python and SQL, removing manual steps and safeguarding the integrity of financial balances.
+    \item Built an \textbf{alerting engine over the billing system} for early detection of anomalies in the collection cycle and revenue leakage. Together with the reconciliation work, it recovered \textbf{several thousand euros of revenue per month} (\textit{revenue assurance}).
+    \item Introduced parallel processing with \verb|ThreadPoolExecutor| to handle high volumes of billing records, cutting load times into the analytics environment.
+    \item Deployed time series models (\textbf{ARIMA, LSTM}) to forecast revenue and operating costs.
+\end{itemize}
+
+\section{Research}
+
+\experience{University of Málaga}{April 2024 -- Present}{Researcher -- Hydrological Modelling and Early Warning Systems}{Málaga, Spain}
+\begin{itemize}
+    \item Development of a \textbf{hybrid physical-heuristic model} for flood early warning in fast-responding Mediterranean catchments, validated against hourly data from the \textbf{SAIH-Hidrosur} gauging station network.
+    \item Design of an \textbf{asymmetric loss function} that penalises underestimation and overestimation differently, aligning the optimisation criterion with the real cost of a warning failure.
+    \item Construction of a \textbf{modular orchestration framework} with parameterised execution, automating the full cycle from climate data ingestion to deployment of the optimisation models.
+    \item First paper under submission to an international hydrology journal; second study in progress on probabilistic warning prediction using model ensembles; conference paper presented.
+\end{itemize}
+
+\experience{Smart Decision Lab (UMA)}{October 2021 -- June 2022}{Research Assistant}{Málaga, Spain}
+\begin{itemize}
+    \item Designed the data infrastructure for processing experimental \textbf{game theory} data and developed pipelines for cleaning and normalising complex variables.
+\end{itemize}
+
+\section{Education}
+
+\experience{PhD in Applied Mathematics and Economics}{2025 -- Present}{University of Málaga}{ }
+
+\experience{MSc in Management (MBA)}{2023 -- 2024}{Universidad Internacional de La Rioja (UNIR)}{ }
+
+\experience{MSc in Data Science \& Business Analytics}{2022 -- 2023}{Universidad de Nebrija}{ }
+
+\experience{BSc in Economics}{2018 -- 2022}{University of Málaga}{ }
+
+\vspace*{0.3cm}
+\textbf{Certifications:}
+\begin{itemize}
+    \item \textbf{Microsoft Certified:} Azure Data Fundamentals (DP-900), 2024.
+    \item \textbf{IBM:} Professional Certificate in Fundamentals of Data Analytics.
+\end{itemize}
+
+\end{document}
