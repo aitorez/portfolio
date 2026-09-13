@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-09-12">
+<meta name="description" content="El conteo de filas no basta. Cómo ordenar la validación de una migración de SQL cuando no conoces lo que estás migrando y el calendario de entregas es ajustado.">
+
+<title>¿Cuándo puedes decir que un objeto está migrado? – Aitor Elordi Zamora</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f82396a459fa6baa821c9434139e5e09.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<meta name="robots" content="noindex, nofollow">
+
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Aitor Elordi Zamora</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../articulos.html"> 
+<span class="menu-text">Artículos</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://www.linkedin.com/in/aitor-elordi-zamora"> 
+<span class="menu-text">LinkedIn</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://orcid.org/0009-0006-1962-8078"> 
+<span class="menu-text">ORCID</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul class="collapse">
+  <li><a href="#las-dos-restricciones-que-lo-condicionan-todo" id="toc-las-dos-restricciones-que-lo-condicionan-todo" class="nav-link active" data-scroll-target="#las-dos-restricciones-que-lo-condicionan-todo">Las dos restricciones que lo condicionan todo</a></li>
+  <li><a href="#por-qué-el-conteo-engaña" id="toc-por-qué-el-conteo-engaña" class="nav-link" data-scroll-target="#por-qué-el-conteo-engaña">Por qué el conteo engaña</a></li>
+  <li><a href="#la-cascada-peldaño-a-peldaño" id="toc-la-cascada-peldaño-a-peldaño" class="nav-link" data-scroll-target="#la-cascada-peldaño-a-peldaño">La cascada, peldaño a peldaño</a></li>
+  <li><a href="#validar-no-es-diagnosticar" id="toc-validar-no-es-diagnosticar" class="nav-link" data-scroll-target="#validar-no-es-diagnosticar">Validar no es diagnosticar</a></li>
+  <li><a href="#los-falsos-positivos" id="toc-los-falsos-positivos" class="nav-link" data-scroll-target="#los-falsos-positivos">Los falsos positivos</a></li>
+  <li><a href="#cómo-lo-plantearía-desde-el-principio" id="toc-cómo-lo-plantearía-desde-el-principio" class="nav-link" data-scroll-target="#cómo-lo-plantearía-desde-el-principio">Cómo lo plantearía desde el principio</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">¿Cuándo puedes decir que un objeto está migrado?</h1>
+</div>
+
+<div>
+  <div class="description">
+    El conteo de filas no basta. Cómo ordenar la validación de una migración de SQL cuando no conoces lo que estás migrando y el calendario de entregas es ajustado.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 12, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Un problema recurrente en cualquier proceso de migración es decidir qué indicadores determinan que un objeto se ha migrado del todo. Parece una pregunta menor y no lo es, porque de esa decisión cuelgan consecuencias muy claras: se cierra una tarea, se da por cumplido un hito, y alguien empieza a construir encima de ese objeto dando por hecho que es correcto.</p>
+<p>Si hablamos de tablas, la primera respuesta que a todos se nos viene a la cabeza es el conteo de filas. Si origen y destino tienen el mismo número de registros, el objeto está migrado. Y esa respuesta funciona hasta que el objeto se consume en una capa de explotación, normalmente un informe, y empiezan a aparecer fallos en la lógica de las consultas que la validación no había detectado.</p>
+<p>Conviene acotar el escenario del que hablo, porque las conclusiones cambian mucho según el punto de partida. Me refiero a migraciones de consultas extensas, con muchas fuentes distintas, desarrolladas por otras personas y sin documentación asociada. Esto no es una situación excepcional: es lo habitual. Cuando te asignan una migración, casi nunca migras lo que tú construiste, sino lo que construyó alguien que ya no está, con criterios que nadie escribió y con reglas de negocio que solo existen dentro de la propia consulta. Eso significa que no puedes validar comparando contra lo que debería salir, porque nadie sabe qué debería salir. Solo puedes comparar el resultado nuevo contra el antiguo: el sistema original es la única especificación disponible.</p>
+<p>Hay además un factor que rara vez se menciona y que determina el resultado tanto como la técnica. En los proyectos reales no hay presupuesto infinito y el calendario suele ir justo. Cuando las fechas empiezan a moverse, se toman decisiones orientadas a llegar al plazo, y una de las más frecuentes es dar por buena una validación de conteo y esquema. Es una decisión comprensible y casi siempre equivocada, porque el ahorro es inmediato y el coste es diferido: los problemas de una validación floja no aparecen durante el desarrollo, sino al conectar la capa de explotación, que es lo último que se hace. Es decir, aparecen justo cuando ya no queda margen para corregirlos.</p>
+<p>Aquí es donde un consultor con varias migraciones a sus espaldas aporta valor real. No en escribir mejor SQL, sino en saber que ese atajo se paga al final y en haber planificado la validación desde el principio para no tener que tomarlo.</p>
+<p>En lo que sigue describo qué validaciones tienen sentido, en qué orden y por qué, y qué decisiones hay que tomar antes de empezar.</p>
+<section id="las-dos-restricciones-que-lo-condicionan-todo" class="level2">
+<h2 class="anchored" data-anchor-id="las-dos-restricciones-que-lo-condicionan-todo">Las dos restricciones que lo condicionan todo</h2>
+<p>Antes de entrar en técnicas, hay dos limitaciones del entorno que descartan por sí solas buena parte de lo que se lee sobre este tema.</p>
+<p>La primera es que origen y destino no siempre viven en el mismo sitio. Cuando los objetos están en instancias distintas, la comparación no puede resolverse dentro del motor con una consulta que cruce ambos lados. Hay que abrir dos conexiones, pedir algo a cada una y comparar los resultados fuera. Eso impone una condición dura: lo que cada lado devuelve tiene que ser pequeño. No es viable traerse dos tablas de millones de filas para compararlas en memoria.</p>
+<p>La segunda es la concurrencia. Las consultas de validación no se ejecutan en el vacío: compiten por los mismos recursos que las cargas reales. Un barrido completo sobre cada objeto migrado es técnicamente posible y operativamente inviable, porque multiplicado por el número de objetos de una migración deja el entorno inutilizable para todo lo demás.</p>
+<p>De ahí sale el principio que ordena todo lo que viene después: la validación debe plantearse como una cascada en la que cada peldaño cuesta más que el anterior y solo se ejecuta si el anterior no ha detectado nada. El orden es lo que importa: de más barata a más cara, deteniéndose en cuanto una falle.</p>
+</section>
+<section id="por-qué-el-conteo-engaña" class="level2">
+<h2 class="anchored" data-anchor-id="por-qué-el-conteo-engaña">Por qué el conteo engaña</h2>
+<p>El conteo es necesario. Es barato, se ejecuta en las dos instancias por separado, devuelve un único número por lado y no hay excusa para no hacerlo. El problema es creerse el resultado sin más.</p>
+<p>El caso que mejor lo ilustra es un cruce mal reproducido que duplica filas, combinado con un filtro que se ha perdido por el camino y que eliminaba aproximadamente esas mismas filas. El conteo cuadra. El contenido no tiene nada que ver. Y como el conteo ha dado verde, el objeto se da por bueno y el error aparece semanas después, en el informe, delante de un usuario de negocio.</p>
+<p>Este tipo de compensación no es raro en consultas complejas. Cuantas más fuentes intervienen, más probable es que dos errores independientes acaben cancelándose en el recuento total.</p>
+</section>
+<section id="la-cascada-peldaño-a-peldaño" class="level2">
+<h2 class="anchored" data-anchor-id="la-cascada-peldaño-a-peldaño">La cascada, peldaño a peldaño</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrama-cascada-validacion.svg" class="img-fluid figure-img"></p>
+<figcaption>Orden de las validaciones, de la más barata a la más cara. Cada peldaño solo se ejecuta si el anterior no ha detectado nada.</figcaption>
+</figure>
+</div>
+<section id="que-compile" class="level3">
+<h3 class="anchored" data-anchor-id="que-compile">Que compile</h3>
+<p>Antes que nada, la consulta migrada tiene que ejecutarse. Suena trivial y es donde caen muchos objetos: las diferencias de dialecto entre motores afectan sobre todo a las funciones de fecha, a los casteos de tipos y al tratamiento de nulos. Cuesta prácticamente nada y descarta lo grosero. No es una validación de resultado, es un requisito previo.</p>
+</section>
+<section id="el-conteo" class="level3">
+<h3 class="anchored" data-anchor-id="el-conteo">El conteo</h3>
+<p>Ya comentado. Barato, obligatorio, insuficiente. Sirve para descartar, nunca para confirmar.</p>
+</section>
+<section id="el-esquema" class="level3">
+<h3 class="anchored" data-anchor-id="el-esquema">El esquema</h3>
+<p>El siguiente peldaño natural es comparar el esquema: número de columnas, nombres y tipos. También devuelve poca información por lado, así que sigue siendo compatible con la restricción de las dos conexiones.</p>
+<p>Merece la pena detenerse en la posición de las columnas. Normalmente es irrelevante, pero deja de serlo cuando algún proceso aguas abajo consume la tabla sin lista explícita de columnas. El caso más habitual hoy son los proyectos de dbt: si un modelo se construye seleccionando todas las columnas de otro, o si varios modelos se combinan mediante uniones, el orden se propaga y una discrepancia se arrastra por toda la cadena sin que nada avise. Por eso lo primero es averiguar si alguien depende de esa posición, y solo entonces decidir si hace falta validarla.</p>
+<p>Llegado a este punto se ha validado que el contrato de la tabla se mantiene. Pero seguimos sin haber mirado el contenido.</p>
+</section>
+<section id="los-agregados-por-columna" class="level3">
+<h3 class="anchored" data-anchor-id="los-agregados-por-columna">Los agregados por columna</h3>
+<p>Este es el peldaño que más rinde y el que más veces se omite.</p>
+<p>Consiste en pedir a cada lado un resumen por columna: suma, mínimo, máximo, número de valores distintos y número de nulos. Devuelve unas pocas cifras por columna, así que funciona con dos conexiones separadas, no mueve datos y cuesta una consulta por lado.</p>
+<p>Y detecta la mayor parte de las discrepancias reales. Si un cruce está duplicando filas, el número de distintos de la clave y el conteo dejan de ser coherentes entre sí. Si un casteo ha perdido precisión, la suma se desvía. Si sobra un filtro, el mínimo o el máximo se desplazan. Si una columna se ha quedado sin poblar, el conteo de nulos se dispara.</p>
+<p>Tiene además una ventaja que no ofrece ninguno de los peldaños siguientes: indica en qué columna está el problema. Eso convierte la validación en algo accionable directamente, sin necesidad de bajar al nivel de fila.</p>
+</section>
+<section id="la-comparación-de-contenido" class="level3">
+<h3 class="anchored" data-anchor-id="la-comparación-de-contenido">La comparación de contenido</h3>
+<p>Cuando los agregados no detectan nada pero el objeto exige una comprobación más estricta, hay que comparar el contenido completo. Cómo se hace depende de un factor: si origen y destino son accesibles desde la misma conexión o no.</p>
+<p><strong>Si comparten motor y conexión</strong>, la herramienta natural es la diferencia de conjuntos, y tiene que ser bidireccional. Restar el destino al origen devuelve las filas que faltan en destino; restar el origen al destino devuelve las que sobran. Con una sola dirección se detectan las pérdidas pero no las duplicaciones ni las filas añadidas de más, que es justo el caso que el conteo ya había dejado pasar. Si ambas direcciones vuelven vacías, el contenido es idéntico, y lo que devuelven cuando no lo es son exactamente las filas discrepantes, lo que encadena directamente con el diagnóstico.</p>
+<p><strong>Si están en instancias distintas</strong>, esa comparación no es posible: no se pueden cruzar dos conexiones en una consulta. Y aquí aparece además el problema de fondo del escenario descrito al principio: para comparar filas hay que poder emparejarlas, y para emparejarlas hace falta una clave que identifique cada fila de forma estable. Si no se conoce el negocio, no se sabe cuál es esa clave. Puede que ni exista.</p>
+<p>La salida es calcular un hash por fila a partir de todas sus columnas y comparar los conjuntos de hashes de ambos lados. El hash proporciona un identificador sin necesidad de entender qué significa la fila, y reduce cada registro a un valor corto, de modo que lo que viaja entre instancias es manejable.</p>
+<p>Dos precauciones sobre el hash. La primera es que solo es comparable si ambos lados lo construyen exactamente igual: mismo orden de columnas, casteos explícitos y un criterio claro sobre cómo se representan los nulos. Cualquier divergencia ahí genera diferencias que no son diferencias de datos. La segunda es que indica que la fila difiere, pero no en qué. Se gana capacidad de detección y se pierde capacidad de diagnóstico, razón de más para no saltarse el peldaño anterior.</p>
+</section>
+</section>
+<section id="validar-no-es-diagnosticar" class="level2">
+<h2 class="anchored" data-anchor-id="validar-no-es-diagnosticar">Validar no es diagnosticar</h2>
+<p>Buena parte de la confusión sobre este tema viene de mezclar dos preguntas distintas.</p>
+<p>Validar es responder si el objeto es correcto. Es una respuesta binaria, debe ser barata y debe poder ejecutarse muchas veces sobre muchos objetos.</p>
+<p>Diagnosticar es responder por qué no lo es. Es exploratorio, caro por definición, y solo tiene sentido cuando la validación ya ha fallado.</p>
+<p>La comparación por columna sirve para validar; la comparación por fila, para diagnosticar. A nivel de negocio el significado está en la fila, porque una fila es un hecho completo y una columna aislada no significa nada por sí sola. Pero ese significado la convierte en la unidad de investigación, no en la de validación. Se valida por columna porque es lo barato, y se baja a fila solo cuando ya se sabe que hay algo que investigar.</p>
+</section>
+<section id="los-falsos-positivos" class="level2">
+<h2 class="anchored" data-anchor-id="los-falsos-positivos">Los falsos positivos</h2>
+<p>Todo lo anterior describe el caso limpio. En la práctica, el primer día que se ejecuta una validación de contenido sobre objetos reales, falla todo. Y no porque la migración esté mal.</p>
+<p>Las causas suelen ser tres. La precisión y el redondeo: dos motores con implementaciones distintas de tipos numéricos producen resultados que difieren en el último decimal, ninguno de los dos está mal y el validador los marca como discrepancia. Los timestamps: diferencias de zona horaria, de precisión o de momento de ejecución generan valores que no van a coincidir jamás. Y las columnas de proceso: fechas de carga, identificadores técnicos, marcas de auditoría, que nunca van a coincidir ni en tipo ni en contenido, y es correcto que no coincidan.</p>
+<p>De ahí se sigue la conclusión que me parece más relevante de todo esto: la decisión de qué comparar y qué ignorar no es técnica, sino semántica. Depende de si la columna significa algo para el negocio o si es un metadato del propio proceso de carga. Una fecha de carga no debe validarse; un importe, sí. Y esa distinción no se puede deducir del esquema: hay que saber qué es cada columna.</p>
+<p>Lo cual tiene una consecuencia importante. Una validación automática necesita, para funcionar, una dosis de conocimiento humano que no se puede eliminar por completo: alguien tiene que clasificar las columnas al menos una vez. El proceso se puede automatizar casi entero, pero no del todo. Una validación completamente automática sobre objetos que nadie ha revisado es una validación que da falso positivo de forma sistemática, y un validador que falla siempre es un validador que se acaba ignorando, lo que equivale a no tenerlo.</p>
+</section>
+<section id="cómo-lo-plantearía-desde-el-principio" class="level2">
+<h2 class="anchored" data-anchor-id="cómo-lo-plantearía-desde-el-principio">Cómo lo plantearía desde el principio</h2>
+<p>La respuesta a la pregunta del título no es una receta técnica, sino una forma de organizar el trabajo antes de empezar a migrar.</p>
+<p>Lo primero es involucrar a los equipos de negocio. No hace falta un análisis funcional completo, pero sí recopilar toda la información disponible sobre los objetos que se van a migrar: qué significan, quién los consume y qué columnas son datos y cuáles son metadatos. Ese mínimo de conocimiento es lo que permite después distinguir una discrepancia real de un falso positivo, y conseguirlo al principio cuesta una fracción de lo que cuesta reconstruirlo al final.</p>
+<p>Lo segundo es ordenar los objetos por criticidad y empezar por los más sensibles. No todos los objetos tienen las mismas consecuencias si fallan: una tabla que sostiene un informe financiero revisado por dirección no es comparable con una tabla intermedia que solo alimenta a otro proceso. Ese orden no significa que los demás se validen menos, sino que los críticos se validan cuando todavía queda margen de calendario, en lugar de caer en la ventana final del proyecto, que es exactamente cuando no hay tiempo para corregir nada.</p>
+<p>Y lo tercero, que es lo esencial, es no dar nada por hecho. Que un objeto sea pequeño, o aparentemente sencillo, o que lo haya migrado una herramienta automática, no es motivo para bajar el nivel de exigencia. Al final hay que validarlo todo. La cascada existe para que eso sea posible sin arruinar el rendimiento del entorno: cada objeto recorre los peldaños hasta que aparece una discrepancia o hasta que se agotan, de forma que la meticulosidad no se paga con un coste inasumible. La criticidad decide el orden; el nivel de exigencia no cambia.</p>
+<p>Planteado así, la validación deja de ser una comprobación técnica que se hace al final y pasa a ser una decisión de diseño que se toma al principio, y que determina cuánto se va a poder confiar en la propia migración.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/aitorez\.github\.io\/portfolio");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
